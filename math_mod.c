@@ -10,7 +10,7 @@ int mod_subtract(int num1, int num2, int mod)
 
 int mod_multiply(int num1, int num2, int mod)
 {
-    return ((num1 % mod) * (num2 % mod) % mod);
+    return (((num1 % mod) * (num2 % mod)) % mod);
 }
 
 int mod_add(int num1, int num2, int mod)
@@ -22,7 +22,7 @@ int is_mod_multiple(int a, int b, int mod)
 {
     for (int i = 1; i < mod; i++)
     {
-        if (mod_multiply(i, b, mod) == a)
+        if (mod_multiply(i, a, mod) == b)
         {
             return i;
         }

@@ -3,16 +3,6 @@
 #include "hamming.h"
 #include "matrix.h"
 
-void print_buffer(int *buffer, int length)
-{
-    for (int i = 0; i < length; i++)
-    {
-        printf("%i", buffer[i]);
-    }
-    
-    printf("\n");
-}
-
 void print_matrix(matrix_t *matrix)
 {
     for (int i = 0; i < matrix->rows; i++)
