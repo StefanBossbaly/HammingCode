@@ -23,6 +23,14 @@ void matrix_init(matrix_t *matrix, int rows, int columns)
     }
 }
 
+void matrix_insert_column(matrix_t *matrix, int column, int *buffer)
+{
+	for (int i = 0; i < matrix->rows; i++)
+	{
+		matrix->data[i][column] = buffer[i];
+	}
+}
+
 void matrix_get_column(matrix_t *matrix, int column, int *buffer)
 {
 	for (int i = 0; i < matrix->rows; i++)
