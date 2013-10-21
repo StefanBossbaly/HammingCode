@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "math_mod.h"
 #include "hamming.h"
+#include "matrix.h"
 
 void print_buffer(int *buffer, int length)
 {
@@ -10,6 +11,19 @@ void print_buffer(int *buffer, int length)
     }
     
     printf("\n");
+}
+
+void print_matrix(matrix_t *matrix)
+{
+    for (int i = 0; i < matrix->rows; i++)
+    {
+        for (int j = 0; j < matrix->columns; j++)
+        {
+            printf("%i", matrix->data[i][j]);
+        }
+
+        printf("\n");
+    }
 }
 
 int main(void)
@@ -26,4 +40,11 @@ int main(void)
     
     hamming_generate_matrix(&hamming);
     
+    printf("========== Base Matrix ===========\n");
+    print_matrix(hamming.base);
+    printf("========== End ===========\n");
+
+    printf("========== Generator Matrix ===========\n");
+    print_matrix(hamming.generator);
+    printf("========== End ===========\n");
 }

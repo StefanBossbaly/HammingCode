@@ -19,25 +19,7 @@ void hamming_generate_matrix(hamming_t *hamming)
 {
     hamming_generate_base_matrix(hamming);
     
-    for (int i = 0; i < hamming->base->rows; i++)
-    {
-        for (int j = 0; j < hamming->base->columns; j++)
-        {
-            printf("%i", hamming->base->data[i][j]);
-        }
-        printf("\n");
-    }
-    
-    /*hamming_eliminate_multiples(hamming, base_matrix);
-    
-    for (int i = 0; i < row; i++)
-    {
-        for (int j = 0; j < col; j++)
-        {
-            printf("%i", hamming->generator_matrix[i][j]);
-        }
-        printf("\n");
-    }*/
+    hamming_eliminate_multiples(hamming);
 }
 
 void hamming_generate_base_matrix(hamming_t *hamming)
@@ -78,36 +60,37 @@ int hamming_is_scalar_multiple(hamming_t *hamming, int *a, int *b)
 
 void hamming_eliminate_multiples(hamming_t *hamming)
 {
-    /*int cols = pow(hamming->q, hamming->r) - 1;
-    int currentSize = 1;
-    
-    for (int i = 0; i < hamming->r; i++)
-    {
-        hamming->generator_matrix[0][i] = base_matrix[0][i];
-    }
-    
-    int buffer1[hamming->r];
-    int buffer2[hamming->r];
-    
-    for (int col = 0; col < cols; col++)
-    {
-        for (int gen = 0; gen < currentSize; gen++)
-        {
-            for (int row = 0; row < hamming->r; row++)
-            {
-                buffer1[row] = base_matrix[col][row];
-                buffer2[row] = hamming->generator_matrix[gen][row];
-            }
-            
-            if (! hamming_is_scalar_multiple(hamming, buffer1, buffer2))
-            {
-                for (int i = 0; i < hamming->r; i++)
-                {
-                    hamming->generator_matrix[currentSize][i] = base_matrix[col][i];
-                }
-                
-                currentSize++;
-            }
-        }
-    }*/
+	int base_col[hamming->base->rows];
+
+	//Get the first column and add it to our generator matrix
+	matrix_get_column(hamming->base, 0, base_col);
+	matrix_insert_column(hamming->generator, 0, base_col);
+
+	int size = 1;
+
+	//Start at column 1 and go thru them all
+	for (int i = 1; i < hamming->base->columns; i++)
+	{
+		//Get the i-th column of the base
+		matrix_get_column(hamming->base, i, base_col);
+
+		//Go thru each of the linearly dependant columns
+		for (int j = 0; j < size; j++)
+		{
+			int gen_col[hamming->generator->rows];
+
+			//Get the j-th column of the generator
+			matrix_get_column(hamming->generator, i, gen_col);
+
+			//If the columns are not scalar multiplies
+			if (! hamming_is_scalar_multiple(hamming, base_col, gen_col))
+			{
+				//Insert the base column into the generator
+				matrix_insert_column(hamming->generator, size, base_col);
+
+				//Increment size
+				size++;
+			}
+		}
+	}
 }
