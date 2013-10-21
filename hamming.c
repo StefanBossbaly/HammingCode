@@ -39,17 +39,6 @@ void hamming_generate_base_matrix(hamming_t *hamming)
     }
 }
 
-void print_buffer(int *buffer, int length)
-{
-    for (int i = 0; i < length; i++)
-    {
-        printf("%i", buffer[i]);
-    }
-
-    printf("\n");
-}
-
-
 int hamming_is_scalar_multiple(hamming_t *hamming, int *a, int *b)
 {
 	int multiple = -1;
@@ -61,13 +50,17 @@ int hamming_is_scalar_multiple(hamming_t *hamming, int *a, int *b)
             int temp = is_mod_multiple(a[i], b[i], hamming->q);
 
             if (multiple == -1)
+            {
             	multiple = temp;
+            }
             else if (multiple != temp)
+            {
             	return 0;
+            }
     	}
     }
 
-    return (multiple != -1) || (multiple != 0);
+    return (multiple != -1) && (multiple != 0);
 }
 
 void hamming_eliminate_multiples(hamming_t *hamming)
@@ -94,9 +87,6 @@ void hamming_eliminate_multiples(hamming_t *hamming)
 		{
 			//Get the j-th column of the generator matrix
 			matrix_get_column(hamming->generator, j, gen_col);
-
-			printf("Column of generator matrix j = %i\n", j);
-			print_buffer(gen_col, hamming->r);
 
 			//If the columns are not scalar multiplies
 			if (hamming_is_scalar_multiple(hamming, base_col, gen_col))
