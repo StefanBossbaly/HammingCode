@@ -47,3 +47,16 @@ void convert_to_mod(int number, int mod, int *buffer, int length)
     }
 }
 
+int mod_inner_product(int *a, int *b, int length, int mod)
+{
+	int inner_product = 0;
+
+	for (int i = 0; i < length; i++)
+	{
+		int product = mod_multiply(a[i], b[i], mod);
+		inner_product = mod_add(product, inner_product, mod);
+	}
+
+	return inner_product;
+}
+
