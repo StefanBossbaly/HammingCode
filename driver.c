@@ -37,4 +37,6 @@ int main(void)
     printf("========== Generator Matrix ===========\n");
     print_matrix(hamming.generator);
     printf("========== End ===========\n");
+
+    hamming_free(&hamming);
 }

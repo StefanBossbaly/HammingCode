@@ -105,3 +105,12 @@ void hamming_eliminate_multiples(hamming_t *hamming)
 		}
 	}
 }
+
+void hamming_free(hamming_t *hamming)
+{
+	matrix_free(hamming->base);
+	matrix_free(hamming->generator);
+
+	free(hamming->base);
+	free(hamming->generator);
+}
