@@ -8,42 +8,27 @@ void hamming_init(hamming_t *hamming, int r, int q)
     hamming->r = r;
     hamming->q = q;
     
-    hamming->generator_matrix = (int **) calloc(hamming->r, sizeof(int *));
-    
-    //q^r - 1 / r - 1
-    int size = (pow(q, r) - 1) / (r - 1);
-    
-    for (int i = 0; i < hamming->r; i++)
-    {
-        hamming->generator_matrix[i] = (int *) calloc(size, sizeof(int));
-    }
+    hamming->base = (matrix_t *) malloc(sizeof(matrix_t));
+    hamming->generator = (matrix_t *) malloc(sizeof(matrix_t));
+
+    matrix_init(hamming->base, hamming->r, pow(hamming->q, hamming->r) - 1);
+    matrix_init(hamming->generator, hamming->r, (pow(q, r) - 1) / (r - 1));
 }
 
 void hamming_generate_matrix(hamming_t *hamming)
 {
-    int row = hamming->r;
-    int col = pow(hamming->q, hamming->r) - 1;
+    hamming_generate_base_matrix(hamming);
     
-    int **base_matrix;
-    base_matrix = (int **) calloc(row, sizeof(int *));
-    
-    for (int i = 0; i < row; i++)
+    for (int i = 0; i < hamming->base->rows; i++)
     {
-        base_matrix[i] = (int *) calloc(col, sizeof(int));
-    }
-    
-    hamming_generate_base_matrix(hamming, base_matrix);
-    
-    for (int i = 0; i < row; i++)
-    {
-        for (int j = 0; j < col; j++)
+        for (int j = 0; j < hamming->base->columns; j++)
         {
-            printf("%i", base_matrix[i][j]);
+            printf("%i", hamming->base->data[i][j]);
         }
         printf("\n");
     }
     
-    hamming_eliminate_multiples(hamming, base_matrix);
+    /*hamming_eliminate_multiples(hamming, base_matrix);
     
     for (int i = 0; i < row; i++)
     {
@@ -52,23 +37,25 @@ void hamming_generate_matrix(hamming_t *hamming)
             printf("%i", hamming->generator_matrix[i][j]);
         }
         printf("\n");
-    }
+    }*/
 }
 
-void hamming_generate_base_matrix(hamming_t *hamming, int **buffer)
+void hamming_generate_base_matrix(hamming_t *hamming)
 {
-    int cols = pow(hamming->q, hamming->r) - 1;
-    int rows = hamming->r;
+	matrix_t *base = hamming->base;
+
+    int temp[base->rows];
     
-    int temp[rows];
-    
-    for (int i = 0; i < cols; i++)
+    //Count from 0 to q^r - 1
+    for (int i = 0; i < base->columns; i++)
     {
+    	//Convert i+1 to a number in our mod
         convert_to_mod(i + 1, hamming->q, temp, hamming->r);
         
-        for (int j = 0; j < rows; j++)
+        //Copy the value into our base matrix
+        for (int j = 0; j < base->rows; j++)
         {
-            buffer[j][i] = temp[j];
+            base->data[j][i] = temp[j];
         }
     }
 }
@@ -92,7 +79,7 @@ int hamming_is_scalar_multiple(hamming_t *hamming, int *a, int *b)
     return 1;
 }
 
-void hamming_eliminate_multiples(hamming_t *hamming, int **base_matrix)
+/*void hamming_eliminate_multiples(hamming_t *hamming, int **base_matrix)
 {
     int cols = pow(hamming->q, hamming->r) - 1;
     int currentSize = 1;
@@ -126,4 +113,4 @@ void hamming_eliminate_multiples(hamming_t *hamming, int **base_matrix)
             }
         }
     }
-}
+}*/
