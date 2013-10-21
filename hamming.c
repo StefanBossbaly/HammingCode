@@ -53,10 +53,7 @@ void hamming_generate_base_matrix(hamming_t *hamming)
         convert_to_mod(i + 1, hamming->q, temp, hamming->r);
         
         //Copy the value into our base matrix
-        for (int j = 0; j < base->rows; j++)
-        {
-            base->data[j][i] = temp[j];
-        }
+        matrix_insert_column(base, i, temp);
     }
 }
 
@@ -79,9 +76,9 @@ int hamming_is_scalar_multiple(hamming_t *hamming, int *a, int *b)
     return 1;
 }
 
-/*void hamming_eliminate_multiples(hamming_t *hamming, int **base_matrix)
+void hamming_eliminate_multiples(hamming_t *hamming)
 {
-    int cols = pow(hamming->q, hamming->r) - 1;
+    /*int cols = pow(hamming->q, hamming->r) - 1;
     int currentSize = 1;
     
     for (int i = 0; i < hamming->r; i++)
@@ -112,5 +109,5 @@ int hamming_is_scalar_multiple(hamming_t *hamming, int *a, int *b)
                 currentSize++;
             }
         }
-    }
-}*/
+    }*/
+}
