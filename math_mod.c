@@ -1,11 +1,12 @@
 #include "math_mod.h"
+#include <math.h>
 
 int mod_subtract(int num1, int num2, int mod)
 {
 	if (num1 >= num2)
 		return num1 - num2;
 
-	return mod - num1 + num2;
+	return mod + num1 - num2;
 }
 
 int mod_multiply(int num1, int num2, int mod)
