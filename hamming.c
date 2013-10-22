@@ -106,6 +106,17 @@ void hamming_eliminate_multiples(hamming_t *hamming)
 	}
 }
 
+void hamming_decode_vector(hamming_t *hamming, int *vector, int *syndrome, int *error)
+{
+	//Create an alias
+	matrix_t *generator = hamming->generator;
+
+	for (int i = 0; i < generator->columns; i++)
+	{
+		syndrome[i] = mod_inner_product(generator->data[i], vector, generator->columns, hamming->q);
+	}
+}
+
 void hamming_free(hamming_t *hamming)
 {
 	matrix_free(hamming->base);

@@ -16,6 +16,7 @@ void hamming_init(hamming_t *hamming, int r, int q);
 void hamming_generate_matrix(hamming_t *hamming);
 void hamming_generate_base_matrix(hamming_t *hamming);
 void hamming_eliminate_multiples(hamming_t *hamming);
+void hamming_decode_vector(hamming_t *hamming, int *vector, int *syndrome, int *error);
 void hamming_free(hamming_t *hamming);
 
 
