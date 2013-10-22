@@ -2,6 +2,7 @@
 #include "hamming.h"
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 void hamming_init(hamming_t *hamming, int r, int q)
 {
@@ -12,7 +13,7 @@ void hamming_init(hamming_t *hamming, int r, int q)
     hamming->generator = (matrix_t *) malloc(sizeof(matrix_t));
 
     matrix_init(hamming->base, hamming->r, pow(hamming->q, hamming->r) - 1);
-    matrix_init(hamming->generator, hamming->r, (pow(q, r) - 1) / (r - 1));
+    matrix_init(hamming->generator, hamming->r, (pow(q, r) - 1) / (q - 1));
 }
 
 void hamming_generate_matrix(hamming_t *hamming)
@@ -60,7 +61,12 @@ int hamming_is_scalar_multiple(hamming_t *hamming, int *a, int *b)
     	}
     }
 
-    return (multiple != -1) && (multiple != 0);
+    if ((multiple != -1) && (multiple != 0))
+    {
+    	return multiple;
+    }
+
+    return 0;
 }
 
 void hamming_eliminate_multiples(hamming_t *hamming)
@@ -106,15 +112,69 @@ void hamming_eliminate_multiples(hamming_t *hamming)
 	}
 }
 
-void hamming_decode_vector(hamming_t *hamming, int *vector, int *syndrome, int *error)
+void hamming_decode_vector(hamming_t *hamming, int *vector, int *unreduced_syndrome, int *syndrome, int *error, int *corrected_vector)
 {
 	//Create an alias
 	matrix_t *generator = hamming->generator;
 
+	for (int i = 0; i < generator->rows; i++)
+	{
+		unreduced_syndrome[i] = mod_inner_product(generator->data[i], vector, generator->columns, hamming->q);
+	}
+
+	int gen_column[generator->rows];
+
 	for (int i = 0; i < generator->columns; i++)
 	{
-		syndrome[i] = mod_inner_product(generator->data[i], vector, generator->columns, hamming->q);
+		matrix_get_column(generator, i, gen_column);
+
+		int alpha = hamming_is_scalar_multiple(hamming, unreduced_syndrome, gen_column);
+
+		if (alpha != 0)
+		{
+			*error = alpha;
+
+			memcpy(syndrome, gen_column, sizeof(int) * generator->rows);
+
+			int error_index = hamming_get_syndrome_index(hamming, syndrome);
+
+			printf("%i\n", error_index);
+
+			corrected_vector[error_index] = mod_subtract(vector[error_index], *error, hamming->q);
+
+			return;
+		}
 	}
+
+	*error = 0;
+	memcpy(syndrome, unreduced_syndrome, sizeof(int) * generator->rows);
+}
+
+int hamming_get_syndrome_index(hamming_t *hamming, int *syndrome)
+{
+	int buffer[hamming->generator->rows];
+
+	for (int i = 0; i < hamming->generator->columns; i ++)
+	{
+		matrix_get_column(hamming->generator, i, buffer);
+
+		int isEqual = 1;
+
+		for (int j = 0; j < hamming->generator->rows && isEqual; j++)
+		{
+			if (buffer[j] != syndrome[j])
+			{
+				isEqual = 0;
+			}
+		}
+
+		if (isEqual)
+		{
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 void hamming_free(hamming_t *hamming)

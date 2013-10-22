@@ -48,16 +48,19 @@ int main(void)
     print_matrix(hamming.generator);
     printf("========== End ===========\n");
 
-    printf("Size of generator: %i x %i", hamming.generator->rows, hamming.generator->columns);
+    printf("Size of generator: %i x %i\n", hamming.generator->rows, hamming.generator->columns);
 
     int user_input = -1;
 
     //To store the user inputed vector
     int vector[hamming.generator->columns];
+    int corrected_vector[hamming.generator->columns];
 
     //Need to store the user inputed vector plus \0
     char buffer[hamming.generator->columns + 1];
 
+    //Enough room to store the syndrome
+    int unreduced_syndrome[hamming.generator->rows];
     //Enough room to store the syndrome
     int syndrome[hamming.generator->rows];
 
@@ -71,13 +74,20 @@ int main(void)
     	for (int i = 0; i < hamming.generator->columns; i++)
     	{
     		vector[i] = buffer[i] - '0';
+    		corrected_vector[i] = buffer[i] - '0';
     	}
 
+    	hamming_decode_vector(&hamming, vector, unreduced_syndrome, syndrome, &error, corrected_vector);
+
+    	printf("Vector Received: ");
     	print_array(vector, hamming.generator->columns);
-
-    	hamming_decode_vector(&hamming, vector, syndrome, &error);
-
+    	printf("Unreduced Syndrome: ");
+    	print_array(unreduced_syndrome, hamming.generator->rows);
+    	printf("Syndrome: ");
     	print_array(syndrome, hamming.generator->rows);
+    	printf("Error: %i\n", error);
+    	printf("Corrected Vector: ");
+    	print_array(corrected_vector, hamming.generator->columns);
     }
 
     hamming_free(&hamming);
