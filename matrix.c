@@ -39,6 +39,27 @@ void matrix_get_column(matrix_t *matrix, int column, int *buffer)
 	}
 }
 
+int matrix_is_equal(matrix_t *a, matrix_t *b)
+{
+	if ((a->rows != b->rows) || (a->columns != b->columns))
+	{
+		return 0;
+	}
+
+	for (int i = 0; i < a->rows; i++)
+	{
+		for (int j = 0; j < a->columns; j++)
+		{
+			if (a->data[i][j] != b->data[i][j])
+			{
+				return 0;
+			}
+		}
+	}
+
+	return 1;
+}
+
 void matrix_free(matrix_t *matrix)
 {
     for (int i = 0; i < matrix->rows; i++)

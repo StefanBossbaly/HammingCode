@@ -18,6 +18,7 @@ typedef struct
 void matrix_init(matrix_t *matrix, int rows, int columns);
 void matrix_insert_column(matrix_t *matrix, int column, int *buffer);
 void matrix_get_column(matrix_t *matrix, int column, int *buffer);
+int matrix_is_equal(matrix_t *a, matrix_t *b);
 void matrix_free(matrix_t *matrix);
 
 #endif /* MATRIX_H_ */
