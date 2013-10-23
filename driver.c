@@ -41,14 +41,14 @@ int main(void)
     hamming_generate_matrix(&hamming);
     
     printf("========== Base Matrix ===========\n");
+    printf("Size of base: %i x %i\n", hamming.base->rows, hamming.base->columns);
     print_matrix(hamming.base);
     printf("========== End ===========\n");
 
     printf("========== Generator Matrix ===========\n");
+    printf("Size of generator: %i x %i\n", hamming.generator->rows, hamming.generator->columns);
     print_matrix(hamming.generator);
     printf("========== End ===========\n");
-
-    printf("Size of generator: %i x %i\n", hamming.generator->rows, hamming.generator->columns);
 
     int user_input = -1;
 
@@ -67,18 +67,30 @@ int main(void)
     //What was the error that occurred
     int error = 0;
 
+    printf("Enter in vectors to be decoded\n");
+
     while (user_input != 0)
     {
     	scanf("%s", buffer);
 
     	for (int i = 0; i < hamming.generator->columns; i++)
     	{
+    		//Make sure that we do not overflow
+    		if (buffer[i] == '\0')
+    		{
+    			printf("Error: Vector is too short!");
+    			return -1;
+    		}
+
+    		//Insert the number into vector and corrected vectored
     		vector[i] = buffer[i] - '0';
     		corrected_vector[i] = buffer[i] - '0';
     	}
 
+    	//Decode the vector
     	hamming_decode_vector(&hamming, vector, unreduced_syndrome, syndrome, &error, corrected_vector);
 
+    	//Print out fun facts
     	printf("Vector Received: ");
     	print_array(vector, hamming.generator->columns);
     	printf("Unreduced Syndrome: ");
