@@ -2,6 +2,7 @@
 #include "math_mod.h"
 #include "hamming.h"
 #include "matrix.h"
+#include <string.h>
 
 void print_matrix(matrix_t *matrix)
 {
@@ -9,7 +10,14 @@ void print_matrix(matrix_t *matrix)
     {
         for (int j = 0; j < matrix->columns; j++)
         {
-            printf("%i", matrix->data[i][j]);
+            if (j != matrix->columns - 1)
+            {
+                printf("%02i,", matrix->data[i][j]);
+            }
+            else
+            {
+               printf("%02i", matrix->data[i][j]); 
+            }
         }
 
         printf("\n");
@@ -20,7 +28,14 @@ void print_array(int *array, int length)
 {
 	for (int i = 0; i < length; i++)
 	{
-		printf("%i", array[i]);
+            if (i != length - 1)
+            {
+                printf("%02i,", array[i]);
+            }
+            else
+            {
+                printf("%02i", array[i]);
+            }
 	}
 
 	printf("\n");
@@ -33,6 +48,12 @@ int main(void)
     
     int r, q;
     scanf("%i, %i", &r, &q);
+    
+    if (!is_prime(q))
+    {
+        printf("q is not prime!\n");
+        return -1;
+    }
     
     hamming_t hamming;
     
@@ -57,7 +78,7 @@ int main(void)
     int corrected_vector[hamming.generator->columns];
 
     //Need to store the user inputed vector plus \0
-    char buffer[hamming.generator->columns + 1];
+    char buffer[1024];
 
     //Enough room to store the syndrome
     int unreduced_syndrome[hamming.generator->rows];
@@ -72,20 +93,16 @@ int main(void)
     while (user_input != 0)
     {
     	scanf("%s", buffer);
-
-    	for (int i = 0; i < hamming.generator->columns; i++)
-    	{
-    		//Make sure that we do not overflow
-    		if (buffer[i] == '\0')
-    		{
-    			printf("Error: Vector is too short!");
-    			return -1;
-    		}
-
-    		//Insert the number into vector and corrected vectored
-    		vector[i] = buffer[i] - '0';
-    		corrected_vector[i] = buffer[i] - '0';
-    	}
+        
+        int nums_now, bytes_now;
+        int bytes_consumed = 0, nums_read = 0;
+        
+        while ((nums_now = sscanf(buffer + bytes_consumed, "%i,%n", vector + nums_read, &bytes_now)) > 0) {
+            bytes_consumed += bytes_now;
+            nums_read += nums_now;
+        }
+        
+        memcpy(corrected_vector, vector, sizeof(int) * hamming.generator->columns);
 
     	//Decode the vector
     	hamming_decode_vector(&hamming, vector, unreduced_syndrome, syndrome, &error, corrected_vector);

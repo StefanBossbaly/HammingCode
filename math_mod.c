@@ -61,3 +61,14 @@ int mod_inner_product(int *a, int *b, int length, int mod)
 	return inner_product;
 }
 
+int is_prime(int number) {
+    for (int i = 2; i < number; i++) {
+        
+        if (number % i == 0 && i != number)
+        {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
